@@ -1,10 +1,24 @@
-var express = require('express');
 var bodyParser = require('body-parser');
-var app = express();
+var dotenv = require('dotenv');
+var express = require('express');
+var mongoose = require('mongoose');
 var session = require('express-session');
 
+// Setup .env config
+dotenv.config()
+
+// Setup express app
+var app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+
+// Connect to MongoDB using Mongoose
+var mongoUrl = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DB}`
+mongoose.connect(mongoUrl, { useNewUrlParser: true })
+
+const db = mongoose.connection
+db.on('error', (error) => console.error(error))
+db.once('open', () => console.log('Connected to MongoDB'))
 
 //use sessions for tracking logins
 app.use(session({
