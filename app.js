@@ -16,7 +16,11 @@ app.use(session({
 //Redirect main page to login
 app.get("/", function (req, res){
     //redirect to login
-    res.redirect("/default");
+    res.redirect("/tasks");
+});
+
+app.get("/tasks", function (req, res){
+    res.render("tasks");
 });
 
 app.get("/default", function (req, res){
