@@ -4,3 +4,6 @@ Hackathon2020.iml
 
 # npm
 node_modules
+
+# Project
+.env
