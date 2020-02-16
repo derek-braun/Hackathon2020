@@ -13,35 +13,71 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/img', express.static(__dirname + '/Images'));
 
+
 // Connect to MongoDB using Mongoose
 var mongoUrl = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DB}`
-mongoose.connect(mongoUrl, { useNewUrlParser: true })
+mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 
 const db = mongoose.connection
-db.on('error', (error) => console.error(error))
-db.once('open', () => console.log('Connected to MongoDB'))
+db.on('error', (err) => console.error(err))
+db.once('open', () => {
+    console.log('Connected to MongoDB');
 
-//use sessions for tracking logins
-app.use(session({
-    secret: 'Jordon Bad',
-    resave: true,
-    saveUninitialized: false
-}));
+    // Setup models
+    const models = require('./models')(db);
 
-//Redirect main page to login
-app.get("/", function (req, res){
-    //redirect to login
-    res.redirect("/login");
-});
+    // START TODO: Remove for prod
+    // Reset contents in database
+    db.db.dropDatabase(
+        console.log(`${db.db.databaseName} database dropped.`)
+    );
 
-app.get("/login", function (req, res){
-    res.render("login");
-});
+    new models.User({username: 'admin', password: 'admin'}).save().then(() => console.log("\nCreated Admin user\nUsername: admin\nPassword: admin"));
+    // END TODO: Remove for prod
 
-app.post("/login", function(req, res){
-   //Do query stuff here
-   //If valid user set req.session.userId = username
-});
+    //use sessions for tracking logins
+    app.use(session({
+        secret: 'Jordon Bad',
+        resave: true,
+        saveUninitialized: false
+    }));
+
+    //Redirect main page to login
+    app.get("/", function (req, res){
+        //redirect to login
+        res.redirect("/login");
+    });
+
+    app.get("/login", function (req, res){
+        res.render("login");
+    });
+
+    app.post("/login", function(req, res) {
+        models.User.find({ username: req.body.username }, (err, users) => {
+            if(err) {
+                res.status(500).send({
+                    message: 'Internal server error'
+                });
+            };
+
+            if(users.length != 1) {
+                res.status(404).send({
+                    message: 'Invalid username or password'
+                });
+            };
+
+            user = users[0];
+            if(user.password == req.body.password) {
+                req.session.userId = user.username;
+                res.redirect('/tasks');
+            } else {
+                res.status(404).send({
+                    message: 'Invalid username or password'
+                });
+            };
+        });
+        req.body.username
+    });
 
 app.get("/signup", function(req, res){
     res.render("signup");
@@ -63,15 +99,16 @@ app.use(function(req, res, next) {
     }
 });
 
-app.get("/tasks", function (req, res){
-    res.render("tasks");
-});
+    app.get("/tasks", function (req, res){
+        res.render("tasks");
+    });
 
-app.get("/addTask", function (req, res){
-    res.render("addTask");
-});
+    app.get("/addTask", function (req, res){
+        res.render("addTask");
+    });
 
-//Create server, wait for requests
-app.listen(8080, function(){
-    console.log("Server Running on Port 8080");
+    //Create server, wait for requests
+    app.listen(8080, function(){
+        console.log("Server Running on Port 8080");
+    });
 });
