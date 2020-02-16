@@ -31,7 +31,20 @@ app.use(session({
 //Redirect main page to login
 app.get("/", function (req, res){
     //redirect to login
-    res.redirect("/tasks");
+    res.redirect("/login");
+});
+
+app.get("/login", function (req, res){
+    res.render("login");
+});
+
+// Prevent internal page access without login
+app.use(function(req, res, next) {
+    if(req.session && req.session.userId) {
+        next();
+    } else {
+        res.redirect("/");
+    }
 });
 
 app.get("/tasks", function (req, res){
@@ -40,10 +53,6 @@ app.get("/tasks", function (req, res){
 
 app.get("/addTask", function (req, res){
     res.render("addTask");
-});
-
-app.get("/login", function (req, res){
-    res.render("login");
 });
 
 //Create server, wait for requests

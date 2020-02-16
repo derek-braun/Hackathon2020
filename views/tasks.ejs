@@ -42,53 +42,13 @@
       </div>
     </div>
 
-    <div class="card" style="margin-left: 20px; margin-top: 50px; max-width: 80%;">
-      <div class="card-header">2:00pm<button type="submit" class="btn" style="color: red; float: right;">Remove</button></div>
-      <div class="card-body">Go for a walk</div>
-      <div class="card-footer">Nurse Jane Doe</div>
-    </div>
-
-    <div class="card" style="margin-left: 20px; margin-top: 20px; max-width: 80%;">
-      <div class="card-header">2:00pm<button type="submit" class="btn" style="color: red; float: right;">Remove</button></div>
-      <div class="card-body">Go for a walk</div>
-      <div class="card-footer">Nurse Jane Doe</div>
-    </div>
-
-    <div class="card" style="margin-left: 20px; margin-top: 20px; max-width: 80%;">
-      <div class="card-header">2:00pm<button type="submit" class="btn" style="color: red; float: right;">Remove</button></div>
-      <div class="card-body">Go for a walk</div>
-      <div class="card-footer">Nurse Jane Doe</div>
-    </div>
-
-    <div class="card" style="margin-left: 20px; margin-top: 20px; max-width: 80%;">
-      <div class="card-header">2:00pm<button type="submit" class="btn" style="color: red; float: right;">Remove</button></div>
-      <div class="card-body">Go for a walk</div>
-      <div class="card-footer">Nurse Jane Doe</div>
-    </div>
-
-    <div class="card" style="margin-left: 20px; margin-top: 20px; max-width: 80%;">
-      <div class="card-header">2:00pm<button type="submit" class="btn" style="color: red; float: right;">Remove</button></div>
-      <div class="card-body">Go for a walk</div>
-      <div class="card-footer">Nurse Jane Doe</div>
-    </div>
-
-    <div class="card" style="margin-left: 20px; margin-top: 20px; max-width: 80%;">
-      <div class="card-header">2:00pm<button type="submit" class="btn" style="color: red; float: right;">Remove</button></div>
-      <div class="card-body">Go for a walk</div>
-      <div class="card-footer">Nurse Jane Doe</div>
-    </div>
-
-    <div class="card" style="margin-left: 20px; margin-top: 20px; max-width: 80%;">
-      <div class="card-header">2:00pm<button type="submit" class="btn" style="color: red; float: right;">Remove</button></div>
-      <div class="card-body">Go for a walk</div>
-      <div class="card-footer">Nurse Jane Doe</div>
-    </div>
-
-    <div class="card" style="margin-left: 20px; margin-top: 20px; max-width: 80%;">
-      <div class="card-header">2:00pm<button type="submit" class="btn" style="color: red; float: right;">Remove</button></div>
-      <div class="card-body">Go for a walk</div>
-      <div class="card-footer">Nurse Jane Doe</div>
-    </div>
+    <% for(var i = 0; i < tasks.length; i++){ %>
+        <div class="card" style="margin-left: 20px; margin-top: 20px; max-width: 80%;">
+          <div class="card-header"><%=time%><button type="submit" class="btn" style="color: red; float: right;">Remove</button></div>
+          <div class="card-body"><%=title%></div>
+          <div class="card-footer"><%=priority%></div>
+        </div>
+    <% } >
 
     <div class="container">
         <div class="row">
