@@ -11,6 +11,7 @@ dotenv.config()
 var app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use('/img', express.static(__dirname + '/Images'));
 
 // Connect to MongoDB using Mongoose
 var mongoUrl = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DB}`
@@ -35,6 +36,10 @@ app.get("/", function (req, res){
 
 app.get("/tasks", function (req, res){
     res.render("tasks");
+});
+
+app.get("/addTask", function (req, res){
+    res.render("addTask");
 });
 
 app.get("/default", function (req, res){
