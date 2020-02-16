@@ -43,6 +43,17 @@ app.post("/login", function(req, res){
    //If valid user set req.session.userId = username
 });
 
+app.get("/signup", function(req, res){
+    res.render("signup");
+});
+
+app.post("/signup", function(req, res){
+});
+
+app.get("/patientDirectory", function(req, res){
+    res.render("patientDirectory");
+});
+
 // Prevent internal page access without login
 app.use(function(req, res, next) {
     if(req.session && req.session.userId) {
