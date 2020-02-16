@@ -9,8 +9,19 @@ module.exports = (mongoose) => {
 		},
 	});
 
+	const Task = mongoose.model('Task', {
+		name: String,
+		time: {
+			type: Date,
+			default: Date.now,
+		},
+		priority: Number,
+		audio: Buffer,
+	});
+
 	const models = {
 		User: User,
+		Task: Task,
 	};
 
 	return models;

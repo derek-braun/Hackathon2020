@@ -1,5 +1,4 @@
-var bodyParser = require('body-parser')
-;
+var bodyParser = require('body-parser');
 var dotenv = require('dotenv');
 var express = require('express');
 var mongoose = require('mongoose');
@@ -41,40 +40,40 @@ function getAccessToken(subscriptionKey) {
 // You can also change the voice and output formats. See:
 // https://docs.microsoft.com/azure/cognitive-services/speech-service/language-support#text-to-speech
 function textToSpeech(accessToken, text) {
-    // Create the SSML request.
-    let xml_body = xmlbuilder.create('speak')
-        .att('version', '1.0')
-        .att('xml:lang', 'en-us')
-        .ele('voice')
-        .att('xml:lang', 'en-us')
-        .att('name', 'Microsoft Server Speech Text to Speech Voice (en-US, Guy24KRUS)')
-        .txt(text)
-        .end();
-    // Convert the XML into a string to send in the TTS request.
-    let body = xml_body.toString();
+    return new Promise((resolve, reject) => {
+        // Create the SSML request.
+        let xml_body = xmlbuilder.create('speak')
+            .att('version', '1.0')
+            .att('xml:lang', 'en-us')
+            .ele('voice')
+            .att('xml:lang', 'en-us')
+            .att('name', 'Microsoft Server Speech Text to Speech Voice (en-US, Guy24KRUS)')
+            .txt(text)
+            .end();
+        // Convert the XML into a string to send in the TTS request.
+        let body = xml_body.toString();
 
-    let options = {
-        method: 'POST',
-        baseUrl: 'https://canadacentral.tts.speech.microsoft.com/',
-        url: 'cognitiveservices/v1',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken,
-            'cache-control': 'no-cache',
-            'User-Agent': 'Hackathon2020',
-            'X-Microsoft-OutputFormat': 'riff-16khz-16bit-mono-pcm',
-            'Content-Type': 'application/ssml+xml'
-        },
-        body: body
-    }
+        let options = {
+            method: 'POST',
+            baseUrl: 'https://canadacentral.tts.speech.microsoft.com/',
+            url: 'cognitiveservices/v1',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'cache-control': 'no-cache',
+                'User-Agent': 'Hackathon2020',
+                'X-Microsoft-OutputFormat': 'riff-16khz-16bit-mono-pcm',
+                'Content-Type': 'application/ssml+xml'
+            },
+            body: body
+        };
 
-    let request = rp(options)
-        .on('response', (response) => {
-            if (response.statusCode === 200) {
-                request.pipe(fs.createWriteStream('TTSOutput.wav'));
-                console.log('\nYour file is ready.\n')
-            }
+        let output = '';
+        rp(options).on('data', (data) => {
+            output += data.toString();
+        }).on('end', () => {
+            resolve(output)
         });
-    return request;
+    });
 }
 
 // Connect to MongoDB using Mongoose
@@ -179,12 +178,13 @@ db.once('open', () => {
         // Prompts the user to input text.
         const text = req.body.recording;
 
-        try {
-            const accessToken = await getAccessToken(subscriptionKey);
-            await textToSpeech(accessToken, text);
-        } catch (err) {
-            console.log(`Something went wrong: ${err}`);
-        }
+
+        const accessToken = await getAccessToken(subscriptionKey);
+        textToSpeech(accessToken, text).then((tts) => {
+            new models.Task({
+                audio: tts
+            }).save();
+        });
         setTimeout(function() {
             return res.redirect("/tasks");
         }, 50);
