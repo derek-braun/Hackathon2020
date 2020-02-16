@@ -38,6 +38,11 @@ app.get("/login", function (req, res){
     res.render("login");
 });
 
+app.post("/login", function(req, res){
+   //Do query stuff here
+   //If valid user set req.session.userId = username
+});
+
 // Prevent internal page access without login
 app.use(function(req, res, next) {
     if(req.session && req.session.userId) {
