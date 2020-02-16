@@ -42,8 +42,8 @@ app.get("/addTask", function (req, res){
     res.render("addTask");
 });
 
-app.get("/default", function (req, res){
-    res.render("default");
+app.get("/login", function (req, res){
+    res.render("login");
 });
 
 //Create server, wait for requests
